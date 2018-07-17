@@ -12,55 +12,52 @@ var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
 func printf(f string, a ...interface{}) { fmt.Fprintf(writer, f, a...) }
 func scanf(f string, a ...interface{})  { fmt.Fscanf(reader, f, a...) }
 
-func dfs() bool { // true if returned to start point
+func dfs(matrix [][]uint64, used []bool, i int, n uint64) []uint64 {
+	comp := make([]uint64, 0, n)
 
-}
+	for i := range matrix[i] {
+		if !used[i] {
 
-func findNextFalse(flags *[]bool) func() int {
-	return func() int {
-		for i, val := range *flags {
-			if !val {
-				(*flags)[i] = true
-				return i
-			}
 		}
-		return -1
 	}
+
+	return comp
 }
 
 func main() {
 	//STDOUT MUST BE FLUSHED MANUALLY
 	defer writer.Flush()
 
-	var n, m, place, ptr int
+	var n, m, place, ptr uint64
 	scanf("%d %d\n", &n, &m)
 
-	ptrs := make(map[int][]int, n+1)
+	matrix := make([][]uint64, n)
+	degrees := make([]uint64, n) // default is 0
+	for i := uint64(0); i < m; i++ {
+		scanf("%d %d\n", &place, &ptr)
+		place--
+		ptr--
+		matrix[place] = append(matrix[place], ptr)
+		matrix[ptr] = append(matrix[ptr], place)
+		degrees[place]++
+		degrees[ptr]++
+	}
+
+	fmt.Println(matrix)
+	fmt.Println(degrees)
 
 	flags := make([]bool, n+1) // default is false
 
-	for i := 0; i < m; i++ {
-		scanf("%d %d\n", &place, &ptr)
-		ptrs[place] = append(ptrs[place], ptr)
-		ptrs[ptr] = append(ptrs[ptr], place)
-	}
+	for i, value := range flags {
+		if !value {
+			// var ok bool
 
-	flags[0] = true // becouse it's easier to start with 1 :D
-	f := findNextFalse(&flags)
-	loops_counter := 0
-
-	for i := 0; i != -1; i = f() { // iterate over flags
-		printf("i: %v\n", i)
-		if dfs() && len(ptrs[i]) <= 2 {
-			loops_counter++
+			comp := dfs(used[:], i, n)
+			fmt.Println(comp)
 		}
 	}
 
-	printf("%v\n", loops_counter)
+	// loopsCounter := 0
 
-	// printf("ptrs: %v\n", ptrs)
-
-	// var a, b int
-	// scanf("%d %d", &a, &b)
-	// printf("%d\n", a+b)
+	// printf("%v\n", loops_counter)
 }
