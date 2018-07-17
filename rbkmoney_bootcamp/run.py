@@ -7,6 +7,50 @@ CHEAT = 0
 COOPERATE = 1
 
 
+def altruist_logic(*args):
+    return COOPERATE
+
+
+def trickster_logic(*args):
+    # 'кидала'
+    return CHEAT
+
+
+def dodger_logic(opponent_turns=None):
+    # 'хитрец'
+    if not opponent_turns:
+        return COOPERATE
+    return opponent_turns[-1]
+
+
+def unpredictable_logic(*args):
+    # 'непредсказуемый'
+    return choice(CHEAT, COOPERATE)
+
+
+def vindictive_logic(opponent_turns=None):
+    # 'злопамятный'
+    # since COOPERATE is 1, bool(1) == True
+    # all(opponent_turns) checks what opponent didn't chead
+    # all([]) == True, so first turn is always cooperate
+    return COOPERATE if all(opponent_turns) else CHEAT
+
+
+def quirky_logic(opponent_turns=None):
+    # 'ушлый'
+    if len(opponent_turns) < 4:
+        default = (COOPERATE, CHEAT, COOPERATE, COOPERATE)
+        return default[len(opponent_turns)]
+    else:
+        decisive_moves = opponent_turns[:4]
+        if all(decisive_moves):
+            # play as dodger
+            return dodger_logic(opponent_turns[4:])
+        else:
+            # play as trickster
+            return trickster_logic()
+
+
 class Trader:
     def __init__(self):
         self.balance = 0
