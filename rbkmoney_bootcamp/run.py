@@ -1,4 +1,4 @@
-from random import choice, random
+from random import choice, random, randint
 from math import isclose
 
 
@@ -83,30 +83,39 @@ class Trader:
     def __init__(self, type):
         self.balance = 0
         self.type = type
+        self.actions = []
         self._action_logic = get_logic_for_type(type)
 
     def __str__(self):
         return self.type
 
     def perform_action(self, opponent_turns):
-        return self._action_logic(opponent_turns)
+        action = self._action_logic(opponent_turns)
+        self.actions.append(action)
+        return action
 
 
-def make_deal(trader1, trader2):
-    trader1_action, trader2_action = trader1.perform_action(), trader2.perform_action()
+def trade(trader1, trader2):
+    deal_amount = randint(*DEAL_AMOUNT_INTERVAL)
+    trader1.actions = []
+    trader2.actions = []
 
-    if trader1_action == CHEAT and trader2_action == CHEAT:
-        trader1.balance += 2
-        trader2.balance += 2
-    elif trader1_action == COOPERATE and trader2_action == COOPERATE:
-        trader1.balance += 4
-        trader2.balance += 4
-    elif trader1_action == COOPERATE and trader2_action == CHEAT:
-        trader1.balance += 1
-        trader2.balance += 5
-    elif trader1_action == CHEAT and trader2_action == COOPERATE:
-        trader1.balance += 5
-        trader2.balance += 1
+    for deal_number in range(deal_amount):
+        trader1_action = trader1.perform_action(trader2.actions)
+        trader2_action = trader2.perform_action(trader1.actions)
+
+        if trader1_action == CHEAT and trader2_action == CHEAT:
+            trader1.balance += 2
+            trader2.balance += 2
+        elif trader1_action == COOPERATE and trader2_action == COOPERATE:
+            trader1.balance += 4
+            trader2.balance += 4
+        elif trader1_action == COOPERATE and trader2_action == CHEAT:
+            trader1.balance += 1
+            trader2.balance += 5
+        elif trader1_action == CHEAT and trader2_action == COOPERATE:
+            trader1.balance += 5
+            trader2.balance += 1
 
 
 class Game:
@@ -121,7 +130,11 @@ class Game:
         self.traders = traders
 
     def make_turn(self):
-        pass
+        for index, trader in enumerate(self.traders[:-1]):
+            for target_trader in self.traders[index + 1]:
+                trade(trader, target_trader)
+
+        self.turn += 1
 
 
 if __name__ == '__main__':
