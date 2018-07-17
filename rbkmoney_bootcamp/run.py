@@ -87,7 +87,7 @@ class Trader:
         self._action_logic = get_logic_for_type(type)
 
     def __str__(self):
-        return self.type
+        return "Type: {}, Balance: {}".format(self.type, self.balance)
 
     def perform_action(self, opponent_turns):
         action = self._action_logic(opponent_turns)
@@ -129,17 +129,35 @@ class Game:
 
         self.traders = traders
 
+    def exclude_loosers(self):
+        self.traders = sorted(self.traders, key=lambda trader: trader.balance)
+
+        exclude_amount = TRADERS_AMOUNT // 5
+        del self.traders[:-exclude_amount]
+
+        for i in range(exclude_amount):
+            type_to_copy = self.traders[i]
+            self.traders.append(Trader(type_to_copy))
+
     def make_turn(self):
         for index, trader in enumerate(self.traders[:-1]):
             for target_trader in self.traders[index + 1]:
                 trade(trader, target_trader)
 
+        self.exclude_loosers()
         self.turn += 1
+
+
+def print_game_info(game_instance):
+    pass
 
 
 if __name__ == '__main__':
     game_instance = Game()
 
-    # debug
-    for t in game_instance.traders:
-        print(t)
+    while True:
+        game_instance.make_turn()
+
+        user_input = input()
+        if user_input == 'q':
+            break
