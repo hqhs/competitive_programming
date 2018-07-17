@@ -2,13 +2,12 @@ from random import choice, random
 from math import isclose
 
 
-GAME_TURN = 0
-
 DEAL_AMOUNT_INTERVAL = (5, 10)  # interval for deal amount between one pair of traders
 # possible trader actions
 CHEAT = 0
 COOPERATE = 1
 
+TRADERS_AMOUNT = 60
 # don't change the order
 TRADERS_TYPES = (
     'altruist', 'trickster', 'dodger',
@@ -80,17 +79,17 @@ def get_logic_for_type(type):
     return correction_for_the_error(type_logic_map[type])
 
 
-
-
 class Trader:
     def __init__(self, type):
         self.balance = 0
+        self.type = type
+        self._action_logic = get_logic_for_type(type)
 
-        self._action_logic = 
+    def __str__(self):
+        return self.type
 
-
-    def perform_action(self):
-        pass
+    def perform_action(self, opponent_turns):
+        return self._action_logic(opponent_turns)
 
 
 def make_deal(trader1, trader2):
@@ -114,5 +113,20 @@ class Game:
     def __init__(self):
         self.turn = 0  # every turn is a year
 
+        traders = []
+        each_type_amount = TRADERS_AMOUNT // len(TRADERS_TYPES)
+        for trader_type in TRADERS_TYPES:
+            traders.extend([Trader(trader_type) for _ in range(each_type_amount)])
+
+        self.traders = traders
+
     def make_turn(self):
         pass
+
+
+if __name__ == '__main__':
+    game_instance = Game()
+
+    # debug
+    for t in game_instance.traders:
+        print(t)
