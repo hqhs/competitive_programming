@@ -9,28 +9,22 @@ DEAL_AMOUNT_INTERVAL = (5, 10)  # interval for deal amount between one pair of t
 CHEAT = 0
 COOPERATE = 1
 
-
-def correction_for_the_error(logic_func):
-    def wrapper(*args):
-        action = logic_func(*args)
-        if isclose(random() - 0.05, 0, rel_tol=1e-6):
-            return CHEAT if action else COOPERATE
-        return action
-    return wrapper
+# don't change the order
+TRADERS_TYPES = (
+    'altruist', 'trickster', 'dodger',
+    'unpredictable', 'vindictive', 'quirky'
+)
 
 
-@correction_for_the_error
 def altruist_logic(*args):
     return COOPERATE
 
 
-@correction_for_the_error
 def trickster_logic(*args):
     # 'кидала'
     return CHEAT
 
 
-@correction_for_the_error
 def dodger_logic(opponent_turns=None):
     # 'хитрец'
     if not opponent_turns:
@@ -38,13 +32,11 @@ def dodger_logic(opponent_turns=None):
     return opponent_turns[-1]
 
 
-@correction_for_the_error
 def unpredictable_logic(*args):
     # 'непредсказуемый'
     return choice(CHEAT, COOPERATE)
 
 
-@correction_for_the_error
 def vindictive_logic(opponent_turns=None):
     # 'злопамятный'
     # since COOPERATE is 1, bool(1) == True
@@ -53,7 +45,6 @@ def vindictive_logic(opponent_turns=None):
     return COOPERATE if all(opponent_turns) else CHEAT
 
 
-@correction_for_the_error
 def quirky_logic(opponent_turns=None):
     # 'ушлый'
     if len(opponent_turns) < 4:
@@ -69,9 +60,34 @@ def quirky_logic(opponent_turns=None):
             return trickster_logic()
 
 
+def correction_for_the_error(logic_func):
+    def wrapper(*args):
+        action = logic_func(*args)
+        if isclose(random() - 0.05, 0, rel_tol=1e-6):
+            return CHEAT if action else COOPERATE
+        return action
+    return wrapper
+
+
+def get_logic_for_type(type):
+    logics = (
+        altruist_logic, trickster_logic, dodger_logic,
+        unpredictable_logic, vindictive_logic, quirky_logic
+    )
+
+    type_logic_map = dict(zip(TRADERS_TYPES, logics))
+
+    return correction_for_the_error(type_logic_map[type])
+
+
+
+
 class Trader:
-    def __init__(self):
+    def __init__(self, type):
         self.balance = 0
+
+        self._action_logic = 
+
 
     def perform_action(self):
         pass
