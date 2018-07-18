@@ -133,7 +133,7 @@ class Game:
         self.traders = sorted(self.traders, key=lambda trader: trader.balance)
 
         exclude_amount = TRADERS_AMOUNT // 5
-        del self.traders[:-exclude_amount]
+        del self.traders[-exclude_amount:]
 
         for i in range(exclude_amount):
             type_to_copy = self.traders[i]
