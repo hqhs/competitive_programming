@@ -15,6 +15,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	_ "sort"
 )
@@ -70,9 +71,6 @@ func solution(prices []int, T uint64) uint64 {
 		if val < min {
 			min = val
 		}
-		if val > max {
-			max = val
-		}
 	}
 
 	candies := uint64(0)
@@ -89,6 +87,10 @@ func solution(prices []int, T uint64) uint64 {
 			// Imitate walking threw candy market
 			// FIXME: tmpCandies currenntly int32, which is
 			// 16 bit for positive numbers
+			// Actually, I'm not sure, math.MaxInt32 is 2147483647
+			// ACTUALLY I AM STUPID
+			// Integers stored as 1 bit for sign, and 31 bit for value,
+			// I need to see wrong test again to make new theory
 			tmpS, tmpT, tmpCandies := uint64(0), uint64(T), 0
 
 			pricesPtr := prices[:0]
@@ -121,13 +123,14 @@ func main() {
 	//STDOUT MUST BE FLUSHED MANUALLY
 	defer writer.Flush()
 
-	var n int
-	var T uint64
-	scanf("%d %d", &n, &T)
-	prices := make([]int, n)
-	scanf("\n")
-	for i := 0; i < n; i++ {
-		scanf("%d", &prices[i])
-	}
-	printf("%v\n", solution(prices, T))
+	printf("maxInt: %v\n", math.MaxInt32)
+	// var n int
+	// var T uint64
+	// scanf("%d %d", &n, &T)
+	// prices := make([]int, n)
+	// scanf("\n")
+	// for i := 0; i < n; i++ {
+	// 	scanf("%d", &prices[i])
+	// }
+	// printf("%v\n", solution(prices, T))
 }
