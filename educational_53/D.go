@@ -15,7 +15,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
+	_ "math"
 	"os"
 	_ "sort"
 )
@@ -26,10 +26,10 @@ var writer *bufio.Writer = bufio.NewWriter(os.Stdout)
 func printf(f string, a ...interface{}) { fmt.Fprintf(writer, f, a...) }
 func scanf(f string, a ...interface{})  { fmt.Fscanf(reader, f, a...) }
 
-func sum(slice []int) int {
-	sum := 0
+func sum(slice []int) uint64 {
+	sum := uint64(0)
 	for _, value := range slice {
-		sum += value
+		sum += uint64(value)
 	}
 	return sum
 }
@@ -58,11 +58,6 @@ func binarySearch(targetSlic []int, T uint64) int {
 	return startIndex - 1
 }
 
-// Optimize using this, if couldn't pass tests
-// func nextMaxIndex(slice []int) chan int {
-
-// }
-
 func solution(prices []int, T uint64) uint64 {
 	min := prices[0]
 
@@ -84,13 +79,6 @@ func solution(prices []int, T uint64) uint64 {
 			candies += uint64(len(prices)) * (T / uint64(s))
 			T %= uint64(s)
 		} else {
-			// Imitate walking threw candy market
-			// FIXME: tmpCandies currenntly int32, which is
-			// 16 bit for positive numbers
-			// Actually, I'm not sure, math.MaxInt32 is 2147483647
-			// ACTUALLY I AM STUPID
-			// Integers stored as 1 bit for sign, and 31 bit for value,
-			// I need to see wrong test again to make new theory
 			tmpS, tmpT, tmpCandies := uint64(0), uint64(T), 0
 
 			pricesPtr := prices[:0]
@@ -123,14 +111,14 @@ func main() {
 	//STDOUT MUST BE FLUSHED MANUALLY
 	defer writer.Flush()
 
-	printf("maxInt: %v\n", math.MaxInt32)
-	// var n int
-	// var T uint64
-	// scanf("%d %d", &n, &T)
-	// prices := make([]int, n)
-	// scanf("\n")
-	// for i := 0; i < n; i++ {
-	// 	scanf("%d", &prices[i])
-	// }
-	// printf("%v\n", solution(prices, T))
+	// printf("maxInt: %v\n", math.MaxUint64)
+	var n int
+	var T uint64
+	scanf("%d %d", &n, &T)
+	prices := make([]int, n)
+	scanf("\n")
+	for i := 0; i < n; i++ {
+		scanf("%d", &prices[i])
+	}
+	printf("%v\n", solution(prices, T))
 }
