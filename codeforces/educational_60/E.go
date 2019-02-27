@@ -45,9 +45,9 @@ func main() {
 	writer.Flush()
 	scanf("%s\n", &ans3)
 	// so we need to find (i, j) pairs with brute force
-	swaps := make([]byte, n)
+	swaps := make([]int, n)
 	for i := 0; i < n; i++ {
-		swaps[i] = (ans1[i] - 'a') + (ans2[i]-'a')*26 + (ans3[i]-'a')*26*26
+		swaps[i] = (int(ans1[i]) - 'a') + (int(ans2[i])-'a')*26 + (int(ans3[i])-'a')*26*26
 		// printf("swaps[%d] = %v\n", i, swaps[i])
 	}
 	// printf("sorted swaps: %+v\n", swaps)
